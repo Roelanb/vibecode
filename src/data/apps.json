@@ -1,0 +1,84 @@
+{
+  "apps": [
+    {
+      "id": "maze-builder",
+      "name": "Maze Builder",
+      "description": "Generate and solve mazes with different algorithms. Watch as the computer finds its way through the paths you create!",
+      "image": "/maze-preview.png",
+      "link": "/apps/maze",
+      "type": "puzzle",
+      "dateAdded": "2025-06-15",
+      "timesPlayed": 42,
+      "minutesPlayed": 126,
+      "tags": ["puzzle", "maze", "solver"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "snake",
+      "name": "Snake Classic",
+      "description": "The classic Snake game with a modern twist. Collect food, grow longer, and try not to hit the walls or yourself!",
+      "image": "/snake-preview.png",
+      "link": "/apps/snake",
+      "type": "game",
+      "dateAdded": "2025-06-16",
+      "timesPlayed": 87,
+      "minutesPlayed": 345,
+      "tags": ["game", "classic", "arcade"],
+      "difficulty": "easy",
+      "isVibeCoded": true
+    },
+    {
+      "id": "todo-master",
+      "name": "Todo Master",
+      "description": "A beautiful and intuitive todo list application to help you stay organized and productive throughout your day.",
+      "image": "/todo-preview.png",
+      "link": "/apps/todo",
+      "type": "productivity",
+      "dateAdded": "2025-06-17",
+      "timesPlayed": 23,
+      "minutesPlayed": 189,
+      "tags": ["productivity", "tools"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "memory-match",
+      "name": "Memory Match",
+      "description": "Test your memory with this card matching game. Find all pairs before time runs out!",
+      "image": "/memory-preview.png",
+      "link": "/apps/memory-match",
+      "type": "game",
+      "dateAdded": "2025-06-17",
+      "timesPlayed": 56,
+      "minutesPlayed": 278,
+      "tags": ["game", "memory", "cards"],
+      "difficulty": "easy",
+      "isVibeCoded": true
+    },
+    {
+      "id": "weather-dashboard",
+      "name": "Weather Dashboard",
+      "description": "Check current weather conditions and forecast for any location around the world with a clean, intuitive interface.",
+      "image": "/weather-preview.png",
+      "link": "/apps/weather",
+      "type": "tools",
+      "dateAdded": "2025-06-16",
+      "timesPlayed": 34,
+      "minutesPlayed": 145,
+      "tags": ["tools", "weather", "api"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "code-editor",
+      "name": "Live Code Editor",
+      "description": "A real-time code editor with syntax highlighting for multiple programming languages. Great for quick prototyping!",
+      "image": "/code-preview.png",
+      "link": "/apps/code",
+      "type": "development",
+      "dateAdded": "2025-06-15",
+      "timesPlayed": 92,
+      "minutesPlayed": 567,
+      "tags": ["development", "tools", "code"],
+      "difficulty": "hard"
+    }
+  ]
+}

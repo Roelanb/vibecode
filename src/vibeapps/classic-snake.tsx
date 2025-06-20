@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Box, Button, Typography, Paper, IconButton } from '@mui/material';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Box, Typography, Button, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -13,39 +13,45 @@ type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 type Position = { x: number; y: number };
 type CellType = 'empty' | 'snake' | 'food' | 'head';
 
-const GRID_SIZE = 20;
+const HORIZONTALGRID_SIZE = 100; // Increased horizontal positions
+const VERTICALGRID_SIZE = 50; // Increased vertical positions
 const INITIAL_SPEED = 150; // ms - slower initial speed for better playability
 const MIN_SPEED = 60; // Fastest speed the game will reach
 
-const GameContainer = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  margin: '0 auto',
-  width: '100%',
+const GameContainer = styled(Box)(() => ({
+  padding: 0,
+  margin: '0 16px', // Added horizontal margins
+  width: 'calc(100% - 32px)', // Adjust width to account for margins
   height: '100%',
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: 'none', // Remove shadow as we're already in a Paper component
+  backgroundColor: 'transparent',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  justifyContent: 'center',
   position: 'relative',
   overflow: 'hidden',
+  boxShadow: 'none',
+  borderRadius: 0,
 }));
 
 const Grid = styled('div')(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(10px, 1fr))`,
-  gridTemplateRows: `repeat(${GRID_SIZE}, minmax(10px, 1fr))`,
+  gridTemplateColumns: `repeat(${HORIZONTALGRID_SIZE}, 1fr)`,
+  gridTemplateRows: `repeat(${VERTICALGRID_SIZE}, 1fr)`,
   gap: '1px',
   backgroundColor: '#333',
   border: '2px solid #444',
-  margin: '20px 0',
+  margin: '5px 0',
   touchAction: 'none', // Prevent scrolling on mobile when swiping
   width: '100%',
-  maxWidth: '400px',
-  aspectRatio: '1 / 1',
-  [theme.breakpoints.down('sm')]: {
-    maxWidth: '300px',
+  height: '100%',
+  maxHeight: 'calc(100vh - 180px)', // Subtract header, controls, and padding
+  // Removed aspect ratio to allow filling width
+  [theme.breakpoints.up('md')]: {
+    maxHeight: 'calc(100vh - 160px)',
+  },
+  [theme.breakpoints.up('lg')]: {
+    maxHeight: 'calc(100vh - 160px)',
   },
 }));
 
@@ -57,7 +63,7 @@ const Cell = styled('div')<{ type: CellType }>(({ type, theme }) => ({
     type === 'snake' ? theme.palette.primary.main :
     type === 'food' ? theme.palette.error.main :
     theme.palette.background.default,
-  borderRadius: type === 'food' ? '50%' : type === 'head' ? '4px' : '2px',
+  borderRadius: type === 'food' ? '50%' : type === 'head' ? '3px' : '1px',
 }));
 
 const ClassicSnake: React.FC = () => {
@@ -80,8 +86,10 @@ const ClassicSnake: React.FC = () => {
 
   // Generate random food position
   const generateFood = useCallback((): Position => {
-    const x = Math.floor(Math.random() * GRID_SIZE);
-    const y = Math.floor(Math.random() * GRID_SIZE);
+    // Increase horizontal range for food placement
+    const x = Math.floor(Math.random() * HORIZONTALGRID_SIZE);
+    // Keep vertical range more limited for better gameplay
+    const y = Math.floor(Math.random() * Math.min(VERTICALGRID_SIZE, 30));
     // Make sure food doesn't spawn on snake
     const isOnSnake = snake.some(segment => segment.x === x && segment.y === y);
     return isOnSnake ? generateFood() : { x, y };
@@ -89,7 +97,8 @@ const ClassicSnake: React.FC = () => {
   
   // Initialize game
   const startGame = useCallback(() => {
-    setSnake([{ x: 10, y: 10 }]);
+    // Start position more to the left for better horizontal gameplay
+    setSnake([{ x: Math.floor(HORIZONTALGRID_SIZE / 5), y: 15 }]);
     setFood(generateFood());
     directionRef.current = 'RIGHT';
     setGameOver(false);
@@ -238,7 +247,7 @@ const ClassicSnake: React.FC = () => {
         }
 
         // Check for collisions with walls
-        if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
+        if (head.x < 0 || head.x >= HORIZONTALGRID_SIZE || head.y < 0 || head.y >= VERTICALGRID_SIZE) {
           gameOverHandler();
           return prevSnake;
         }
@@ -286,8 +295,8 @@ const ClassicSnake: React.FC = () => {
   // Render game grid
   const renderGrid = () => {
     const grid = [];
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
+    for (let y = 0; y < VERTICALGRID_SIZE; y++) {
+      for (let x = 0; x < HORIZONTALGRID_SIZE; x++) {
         const isHead = snake.length > 0 && snake[0].x === x && snake[0].y === y;
         const isSnakeBody = !isHead && snake.some(segment => segment.x === x && segment.y === y);
         const isFood = food.x === x && food.y === y;
@@ -313,7 +322,7 @@ const ClassicSnake: React.FC = () => {
           display: { xs: 'flex', md: 'none' },
           flexDirection: 'column',
           alignItems: 'center',
-          mt: 2,
+          mt: 1,
           width: '100%'
         }}
       >
@@ -355,13 +364,19 @@ const ClassicSnake: React.FC = () => {
 
   return (
     <GameContainer 
-      elevation={3}
       ref={gameContainerRef}
       tabIndex={0}
-      sx={{ outline: 'none' }}
+      sx={{ 
+        outline: 'none', 
+        height: 'calc(100vh - 64px)', // Subtract AppBar height
+        width: '100%',
+        maxWidth: '100%',
+        m: 0,
+        p: 0,
+      }}
       onKeyDown={handleKeyDown}
     >
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={1} width="100%" px={1}>
         <Typography variant="h5" component="h1">Classic Snake</Typography>
         <Typography variant="h6">Score: {score}</Typography>
       </Box>
@@ -372,7 +387,7 @@ const ClassicSnake: React.FC = () => {
           flexDirection="column" 
           alignItems="center" 
           justifyContent="center"
-          minHeight="300px"
+          minHeight="calc(100vh - 200px)"
         >
           {gameOver ? (
             <Typography variant="h6" color="error" gutterBottom>
@@ -406,7 +421,7 @@ const ClassicSnake: React.FC = () => {
             {renderGrid()}
           </Grid>
           
-          <Box display="flex" justifyContent="center" gap={2} mt={2}>
+          <Box display="flex" justifyContent="center" gap={2} mt={1}>
             <Button 
               variant="contained" 
               color="secondary" 

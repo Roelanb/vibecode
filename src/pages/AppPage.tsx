@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { Box, Typography, CircularProgress, Paper } from '@mui/material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import { lazy, Suspense } from 'react';
 
 // Lazy load the apps to improve initial load performance
@@ -10,35 +10,6 @@ const AppPage = () => {
   const { appId } = useParams<{ appId: string }>();
   
   const renderApp = () => {
-    // Wrapper for vibeapps to ensure they take 50% width
-    const AppWrapper = ({ children }: { children: React.ReactNode }) => (
-      <Box 
-        sx={{ 
-          width: { xs: '100%', sm: '80%', md: '50%' },
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          py: 4,
-          position: 'relative',
-        }}
-      >
-        <Paper 
-          elevation={4} 
-          sx={{ 
-            width: '100%', 
-            height: '100%',
-            overflow: 'hidden',
-            borderRadius: 2,
-            backgroundColor: 'background.paper',
-            position: 'relative',
-          }}
-        >
-          {children}
-        </Paper>
-      </Box>
-    );
     
     // Loading component with spinner
     const LoadingFallback = () => (
@@ -63,17 +34,63 @@ const AppPage = () => {
       case 'snake':
         return (
           <Suspense fallback={<LoadingFallback />}>
-            <AppWrapper>
-              <SnakeGame />
-            </AppWrapper>
+            <Box 
+              sx={{ 
+                width: '100vw',
+                height: 'calc(100vh - 64px)', // Subtract the AppBar height
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                p: 0,
+                m: 0,
+                position: 'absolute',
+                left: 0,
+                right: 0,
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: 'background.paper',
+                  display: 'flex',
+                }}
+              >
+                <SnakeGame />
+              </Box>
+            </Box>
           </Suspense>
         );
       case 'memory-match':
         return (
           <Suspense fallback={<LoadingFallback />}>
-            <AppWrapper>
-              <MemoryGame />
-            </AppWrapper>
+            <Box 
+              sx={{ 
+                width: '100vw',
+                height: 'calc(100vh - 64px)', // Subtract the AppBar height
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                p: 0,
+                m: 0,
+                position: 'absolute',
+                left: 0,
+                right: 0,
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: 'background.paper',
+                  display: 'flex',
+                }}
+              >
+                <MemoryGame />
+              </Box>
+            </Box>
           </Suspense>
         );
 

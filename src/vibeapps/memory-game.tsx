@@ -6,19 +6,21 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TimerIcon from '@mui/icons-material/Timer';
 
 // Types
-interface Card {
+type Card = {
   id: number;
   emoji: string;
   isFlipped: boolean;
   isMatched: boolean;
-}
+};
 
-interface GameStats {
+type GameStats = {
   moves: number;
   matches: number;
   startTime: number | null;
   endTime: number | null;
-}
+};
+
+type DifficultyLevel = 'easy' | 'medium' | 'hard';
 
 // Constants
 const DIFFICULTY_LEVELS = {
@@ -27,14 +29,48 @@ const DIFFICULTY_LEVELS = {
   hard: { pairs: 12, columns: 6 }
 };
 
+// Helper to calculate card size based on screen dimensions and difficulty
+const useCardSize = (difficulty: DifficultyLevel) => {
+  const [cardSize, setCardSize] = React.useState<number>(0);
+  
+  React.useEffect(() => {
+    const calculateCardSize = () => {
+      // Get available space (accounting for header, controls, and margins)
+      const availableHeight = window.innerHeight - 180; // Subtract header, controls, margins
+      const availableWidth = window.innerWidth - 32; // Subtract side margins
+      
+      // Calculate rows needed based on pairs and columns
+      const totalCards = DIFFICULTY_LEVELS[difficulty].pairs * 2;
+      const columns = DIFFICULTY_LEVELS[difficulty].columns;
+      const rows = Math.ceil(totalCards / columns);
+      
+      // Calculate maximum card size that will fit in the available space
+      const maxCardWidth = availableWidth / columns - 16; // Subtract gap between cards
+      const maxCardHeight = availableHeight / rows - 16; // Subtract gap between cards
+      
+      // Use the smaller dimension to maintain square aspect ratio
+      const size = Math.min(maxCardWidth, maxCardHeight);
+      
+      setCardSize(size);
+    };
+    
+    calculateCardSize();
+    window.addEventListener('resize', calculateCardSize);
+    
+    return () => window.removeEventListener('resize', calculateCardSize);
+  }, [difficulty]);
+  
+  return cardSize;
+};
+
 // Styled components
 const GameContainer = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  margin: '0 auto',
+  padding: theme.spacing(2),
+  margin: '0',
   width: '100%',
   height: '100%',
   backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: 0,
   boxShadow: 'none', // Remove shadow as we're already in a Paper component
   display: 'flex',
   flexDirection: 'column',
@@ -64,7 +100,7 @@ const CardFace = styled(Paper)<{ isfront: string }>(({ theme, isfront }) => ({
   backgroundColor: isfront === 'true' ? theme.palette.primary.light : theme.palette.background.default,
   border: `2px solid ${isfront === 'true' ? theme.palette.primary.main : theme.palette.divider}`,
   transform: isfront === 'true' ? 'rotateY(180deg)' : 'rotateY(0deg)',
-  fontSize: '2rem',
+  fontSize: '2.5rem', // Adjusted font size for better fit
 }));
 
 const MemoryGame: React.FC = () => {
@@ -78,8 +114,11 @@ const MemoryGame: React.FC = () => {
     endTime: null,
   });
   const [isGameOver, setIsGameOver] = useState(false);
-  const [difficulty, setDifficulty] = useState<keyof typeof DIFFICULTY_LEVELS>('medium');
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
   const [isGameStarted, setIsGameStarted] = useState(false);
+  
+  // Calculate optimal card size based on screen dimensions and difficulty
+  const cardSize = useCardSize(difficulty);
 
   // Emojis for cards - using useMemo to prevent unnecessary re-creation
   const emojis = useMemo(() => [
@@ -251,43 +290,50 @@ const MemoryGame: React.FC = () => {
   }, [isGameStarted, isGameOver, getElapsedTime, formatTime]);
 
   // Render card
-  const renderCard = (card: Card) => (
-    <Box 
-      sx={{ 
-        aspectRatio: '1/1', 
-        padding: { xs: 0.5, sm: 1 },
-        height: { xs: '60px', sm: '80px', md: '100px' }
-      }}
-    >
-      <CardContainer
-        onClick={() => handleCardClick(card.id)}
+  const renderCard = (card: Card) => {
+    return (
+      <Box 
         sx={{
-          transform: card.isFlipped || card.isMatched ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 0.6s',
-        }}
-        aria-label={card.isFlipped || card.isMatched ? `Card with ${card.emoji}` : 'Card face down'}
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleCardClick(card.id);
-          }
+          width: `${cardSize}px`,
+          height: `${cardSize}px`,
+          position: 'relative',
         }}
       >
-        <CardFace isfront="false">
-          <Typography variant="h4" color="textSecondary">?</Typography>
-        </CardFace>
-        <CardFace isfront="true">
-          <Typography variant="h3">{card.emoji}</Typography>
-        </CardFace>
-      </CardContainer>
-    </Box>
-  );
+        <CardContainer
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            transform: card.isFlipped || card.isMatched ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            opacity: card.isMatched ? 0.8 : 1, // Slightly less transparent for matched cards
+          }}
+          onClick={() => !card.isMatched && handleCardClick(card.id)} // Prevent clicking on matched cards
+          tabIndex={card.isMatched ? -1 : 0} // Remove from tab order if matched
+          aria-label={`Memory card ${card.id} ${card.isMatched ? 'matched' : ''}`}
+          onKeyDown={(e) => {
+            if (!card.isMatched && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              handleCardClick(card.id);
+            }
+          }}
+        >
+          <CardFace isfront="false">
+            <Typography variant="h4" color="textSecondary">?</Typography>
+          </CardFace>
+          <CardFace isfront="true">
+            <Typography variant="h3" color={card.isMatched ? 'success.main' : 'inherit'}>{card.emoji}</Typography>
+          </CardFace>
+        </CardContainer>
+      </Box>
+    );
+  };
 
   return (
-    <GameContainer elevation={3}>
-      <Box width="100%" mb={3}>
-        <Typography variant="h4" component="h1" align="center" gutterBottom>
+    <GameContainer elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <Box width="100%" mb={2}>
+        <Typography variant="h5" component="h1" align="center" gutterBottom>
           Memory Game
         </Typography>
         
@@ -368,14 +414,13 @@ const MemoryGame: React.FC = () => {
       </Box>
       
       {/* Game board */}
-      <Box width="100%" sx={{ maxWidth: '500px' }}>
+      <Box width="100%" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', px: 2 }}>
         <Box sx={{
           display: 'grid',
-          gridTemplateColumns: {
-            xs: `repeat(${Math.min(2, DIFFICULTY_LEVELS[difficulty].columns)}, 1fr)`,
-            sm: `repeat(${DIFFICULTY_LEVELS[difficulty].columns}, 1fr)`
-          },
-          gap: 1
+          gridTemplateColumns: `repeat(${DIFFICULTY_LEVELS[difficulty].columns}, 1fr)`,
+          gap: { xs: 1, sm: 2 },
+          maxWidth: '100%',
+          width: 'fit-content',
         }}>
           {cards.map((card) => (
             <Box key={card.id}>

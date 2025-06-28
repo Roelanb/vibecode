@@ -11,6 +11,8 @@ export interface App {
   tags: string[]
   difficulty: 'easy' | 'medium' | 'hard'
   isVibeCoded?: boolean
+  dateCreated?: string
+  llmUsed?: string
 }
 
 export interface AppsData {

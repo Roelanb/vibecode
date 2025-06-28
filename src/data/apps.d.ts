@@ -16,6 +16,9 @@ interface App {
   minutesPlayed: number;
   tags: string[];
   difficulty: 'easy' | 'medium' | 'hard';
+  isVibeCoded?: boolean;
+  dateCreated?: string;
+  llmUsed?: string;
 }
 
 declare module '../data/apps.json' {

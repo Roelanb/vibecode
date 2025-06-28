@@ -29,6 +29,9 @@ const Dashboard: FC<DashboardProps> = ({ onAppSelect }) => {
   // Initialize apps data
   useEffect(() => {
     const typedAppsData = appsData as unknown as { apps: App[] };
+
+    console.log(typedAppsData.apps);
+
     setApps(typedAppsData.apps);
     setFilteredApps(typedAppsData.apps);
   }, []);

@@ -5,6 +5,9 @@ import { lazy, Suspense } from 'react';
 // Lazy load the apps to improve initial load performance
 const SnakeGame = lazy(() => import('../vibeapps/classic-snake'));
 const MemoryGame = lazy(() => import('../vibeapps/memory-game'));
+const FlappyBird = lazy(() => import('../vibeapps/flappy-bird'));
+const SpaceInvaders = lazy(() => import('../vibeapps/space-invaders'));
+const Pacman = lazy(() => import('../vibeapps/pac-man'));
 
 const AppPage = () => {
   const { appId } = useParams<{ appId: string }>();
@@ -89,6 +92,99 @@ const AppPage = () => {
                 }}
               >
                 <MemoryGame />
+              </Box>
+            </Box>
+          </Suspense>
+        );
+      case 'flappy-bird':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <Box 
+              sx={{ 
+                width: '100vw',
+                height: 'calc(100vh - 64px)', // Subtract the AppBar height
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                p: 0,
+                m: 0,
+                position: 'absolute',
+                left: 0,
+                right: 0,
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: 'background.paper',
+                  display: 'flex',
+                }}
+              >
+                <FlappyBird />
+              </Box>
+            </Box>
+          </Suspense>
+        );
+      case 'space-invaders':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <Box 
+              sx={{ 
+                width: '100vw',
+                height: 'calc(100vh - 64px)', // Subtract the AppBar height
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                p: 0,
+                m: 0,
+                position: 'absolute',
+                left: 0,
+                right: 0,
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: 'background.paper',
+                  display: 'flex',
+                }}
+              >
+                <SpaceInvaders />
+              </Box>
+            </Box>
+          </Suspense>
+        );
+      case 'pac-man':
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <Box 
+              sx={{ 
+                width: '100vw',
+                height: 'calc(100vh - 64px)', // Subtract the AppBar height
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                p: 0,
+                m: 0,
+                position: 'absolute',
+                left: 0,
+                right: 0,
+              }}
+            >
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: 'background.paper',
+                  display: 'flex',
+                }}
+              >
+                <Pacman />
               </Box>
             </Box>
           </Suspense>

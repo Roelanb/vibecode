@@ -1,6 +1,22 @@
 {
   "apps": [
     {
+      "id": "flappy-bird",
+      "name": "Flappy Bird",
+      "description": "Navigate your bird through pipes by flapping its wings. Test your reflexes in this addictive arcade game!",
+      "image": "/flappy-bird-preview.png",
+      "link": "/apps/flappy-bird",
+      "type": "game",
+      "dateAdded": "2025-06-18",
+      "timesPlayed": 64,
+      "minutesPlayed": 215,
+      "tags": ["game", "arcade", "reflexes"],
+      "difficulty": "medium",
+      "isVibeCoded": true,
+      "dateCreated": "2025-06-27",
+      "llmUsed": "Gemini"
+    },
+    {
       "id": "maze-builder",
       "name": "Maze Builder",
       "description": "Generate and solve mazes with different algorithms. Watch as the computer finds its way through the paths you create!",
@@ -25,7 +41,9 @@
       "minutesPlayed": 345,
       "tags": ["game", "classic", "arcade"],
       "difficulty": "easy",
-      "isVibeCoded": true
+      "isVibeCoded": true,
+      "dateCreated": "2025-06-27",
+      "llmUsed": "Gemini"
     },
     {
       "id": "todo-master",
@@ -52,7 +70,9 @@
       "minutesPlayed": 278,
       "tags": ["game", "memory", "cards"],
       "difficulty": "easy",
-      "isVibeCoded": true
+      "isVibeCoded": true,
+      "dateCreated": "2025-06-27",
+      "llmUsed": "Gemini"
     },
     {
       "id": "weather-dashboard",
@@ -79,6 +99,38 @@
       "minutesPlayed": 567,
       "tags": ["development", "tools", "code"],
       "difficulty": "hard"
+    },
+    {
+      "id": "space-invaders",
+      "name": "Space Invaders",
+      "description": "Classic arcade shooter game! Defend Earth from invading aliens. Use arrow keys to move and spacebar to shoot.",
+      "image": "/space-invaders-preview.png",
+      "link": "/apps/space-invaders",
+      "type": "game",
+      "dateAdded": "2025-06-24",
+      "timesPlayed": 0,
+      "minutesPlayed": 0,
+      "tags": ["game", "arcade", "classic", "shooter"],
+      "difficulty": "medium",
+      "isVibeCoded": true,
+      "dateCreated": "2025-06-27",
+      "llmUsed": "Gemini"
+    },
+    {
+      "id": "pac-man",
+      "name": "Pac-Man",
+      "description": "The classic arcade game. Eat all the pellets while avoiding the ghosts!",
+      "image": "/pac-man-preview.png",
+      "link": "/apps/pac-man",
+      "type": "game",
+      "dateAdded": "2025-06-26",
+      "timesPlayed": 0,
+      "minutesPlayed": 0,
+      "tags": ["game", "arcade", "classic"],
+      "difficulty": "medium",
+      "isVibeCoded": true,
+      "dateCreated": "2025-06-27",
+      "llmUsed": "Gemini"
     }
   ]
 }

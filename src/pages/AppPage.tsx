@@ -1,213 +1,167 @@
+import React, { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import { lazy, Suspense } from 'react';
+import { Typography, Box, Card, CardContent, Grid, Chip, CircularProgress } from '@mui/material';
+import appsData from '../data/apps.json';
+import type { App } from '../types/apps';
 
-// Lazy load the apps to improve initial load performance
-const SnakeGame = lazy(() => import('../vibeapps/classic-snake'));
-const MemoryGame = lazy(() => import('../vibeapps/memory-game'));
-const FlappyBird = lazy(() => import('../vibeapps/flappy-bird'));
-const SpaceInvaders = lazy(() => import('../vibeapps/space-invaders'));
-const Pacman = lazy(() => import('../vibeapps/pac-man'));
+// Lazy load the app components
+const FlappyBird = React.lazy(() => import('../vibeapps/flappy-bird'));
+const ClassicSnake = React.lazy(() => import('../vibeapps/classic-snake'));
+const MemoryGame = React.lazy(() => import('../vibeapps/memory-game'));
+const PacMan = React.lazy(() => import('../vibeapps/pac-man'));
+const SpaceInvaders = React.lazy(() => import('../vibeapps/space-invaders'));
 
-const AppPage = () => {
-  const { appId } = useParams<{ appId: string }>();
-  
-  const renderApp = () => {
-    
-    // Loading component with spinner
-    const LoadingFallback = () => (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '50vh',
-          width: '100%',
-        }}
-      >
-        <CircularProgress size={60} thickness={4} />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Loading app...
-        </Typography>
-      </Box>
-    );
+// Component mapping
+const appComponents: { [key: string]: React.ComponentType } = {
+  'flappy-bird': FlappyBird,
+  'snake': ClassicSnake,
+  'memory-match': MemoryGame,
+  'pac-man': PacMan,
+  'space-invaders': SpaceInvaders,
+};
 
-    switch (appId) {
-      case 'snake':
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box 
-              sx={{ 
-                width: '100vw',
-                height: 'calc(100vh - 64px)', // Subtract the AppBar height
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                p: 0,
-                m: 0,
-                position: 'absolute',
-                left: 0,
-                right: 0,
-              }}
-            >
-              <Box 
-                sx={{ 
-                  width: '100%', 
-                  height: '100%',
-                  overflow: 'hidden',
-                  backgroundColor: 'background.paper',
-                  display: 'flex',
-                }}
-              >
-                <SnakeGame />
-              </Box>
-            </Box>
-          </Suspense>
-        );
-      case 'memory-match':
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box 
-              sx={{ 
-                width: '100vw',
-                height: 'calc(100vh - 64px)', // Subtract the AppBar height
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                p: 0,
-                m: 0,
-                position: 'absolute',
-                left: 0,
-                right: 0,
-              }}
-            >
-              <Box 
-                sx={{ 
-                  width: '100%', 
-                  height: '100%',
-                  overflow: 'hidden',
-                  backgroundColor: 'background.paper',
-                  display: 'flex',
-                }}
-              >
-                <MemoryGame />
-              </Box>
-            </Box>
-          </Suspense>
-        );
-      case 'flappy-bird':
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box 
-              sx={{ 
-                width: '100vw',
-                height: 'calc(100vh - 64px)', // Subtract the AppBar height
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                p: 0,
-                m: 0,
-                position: 'absolute',
-                left: 0,
-                right: 0,
-              }}
-            >
-              <Box 
-                sx={{ 
-                  width: '100%', 
-                  height: '100%',
-                  overflow: 'hidden',
-                  backgroundColor: 'background.paper',
-                  display: 'flex',
-                }}
-              >
-                <FlappyBird />
-              </Box>
-            </Box>
-          </Suspense>
-        );
-      case 'space-invaders':
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box 
-              sx={{ 
-                width: '100vw',
-                height: 'calc(100vh - 64px)', // Subtract the AppBar height
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                p: 0,
-                m: 0,
-                position: 'absolute',
-                left: 0,
-                right: 0,
-              }}
-            >
-              <Box 
-                sx={{ 
-                  width: '100%', 
-                  height: '100%',
-                  overflow: 'hidden',
-                  backgroundColor: 'background.paper',
-                  display: 'flex',
-                }}
-              >
-                <SpaceInvaders />
-              </Box>
-            </Box>
-          </Suspense>
-        );
-      case 'pac-man':
-        return (
-          <Suspense fallback={<LoadingFallback />}>
-            <Box 
-              sx={{ 
-                width: '100vw',
-                height: 'calc(100vh - 64px)', // Subtract the AppBar height
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-                p: 0,
-                m: 0,
-                position: 'absolute',
-                left: 0,
-                right: 0,
-              }}
-            >
-              <Box 
-                sx={{ 
-                  width: '100%', 
-                  height: '100%',
-                  overflow: 'hidden',
-                  backgroundColor: 'background.paper',
-                  display: 'flex',
-                }}
-              >
-                <Pacman />
-              </Box>
-            </Box>
-          </Suspense>
-        );
+const AppPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const app = appsData.apps.find((a) => a.id === id) as App;
 
-      // Add more cases for other apps here
-      default:
-        return (
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              {appId ? `${appId.charAt(0).toUpperCase() + appId.slice(1)}` : 'App Not Found'}
-            </Typography>
-            <Typography variant="body1">
-              {appId ? `The ${appId} app is coming soon!` : 'Please select an app from the dashboard.'}
-            </Typography>
-          </Box>
-        );
-    }
-  };
+  if (!app) {
+    return <Typography variant="h5">App not found</Typography>;
+  }
+
+  const AppComponent = appComponents[app.id];
+  const hasComponent = !!AppComponent;
 
   return (
-    <Box sx={{ width: '100%', height: '100%' }}>
-      {renderApp()}
+    <Box sx={{ p: 2 }}>
+      {/* App Info Panel */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Grid container spacing={3} alignItems="center">
+            <Grid item>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '2rem',
+                  color: 'text.secondary',
+                  borderRadius: 1
+                }}
+              >
+                {app.name.charAt(0)}
+              </Box>
+            </Grid>
+            <Grid item xs>
+              <Typography variant="h4" gutterBottom>{app.name}</Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>{app.description}</Typography>
+              
+              <Box sx={{ mb: 2 }}>
+                {app.tags.map((tag) => (
+                  <Chip key={tag} label={tag} size="small" sx={{ mr: 1, mb: 1 }} />
+                ))}
+              </Box>
+              
+              <Grid container spacing={2}>
+                <Grid item>
+                  <Typography variant="body2" color="text.secondary">
+                    Type: {app.type}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2" color="text.secondary">
+                    Difficulty: {app.difficulty}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2" color="text.secondary">
+                    Added: {app.dateAdded}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2" color="text.secondary">
+                    Played: {app.timesPlayed || app.timesUsed || 0} times
+                  </Typography>
+                </Grid>
+                {app.minutesPlayed && (
+                  <Grid item>
+                    <Typography variant="body2" color="text.secondary">
+                      Minutes: {app.minutesPlayed}
+                    </Typography>
+                  </Grid>
+                )}
+              </Grid>
+              
+              {app.isVibeCoded && (
+                <Typography variant="body2" color="primary.main" sx={{ mt: 1 }}>
+                  VibeCode Generated with {app.llmUsed}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+      
+      {/* App Frame */}
+      <Card>
+        <CardContent sx={{ p: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {hasComponent ? (
+            <Box
+              sx={{
+                width: '800px',
+                height: '600px',
+                maxWidth: '100%',
+                borderRadius: 1,
+                overflow: 'hidden'
+              }}
+            >
+              <Suspense fallback={
+                <Box
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)'
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              }>
+                <AppComponent />
+              </Suspense>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                width: '800px',
+                height: '600px',
+                maxWidth: '100%',
+                border: '2px dashed rgba(255, 255, 255, 0.3)',
+                borderRadius: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)'
+              }}
+            >
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                {app.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mb: 2 }}>
+                App implementation coming soon...
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                Component not found for: {app.id}
+              </Typography>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
     </Box>
   );
 };

@@ -6,8 +6,10 @@ export interface App {
   link: string
   type: 'game' | 'puzzle' | 'productivity' | 'development' | 'tools'
   dateAdded: string
-  timesPlayed: number
-  minutesPlayed: number
+  timesPlayed?: number
+  minutesPlayed?: number
+  timesUsed?: number
+  timesDownloaded?: number
   tags: string[]
   difficulty: 'easy' | 'medium' | 'hard'
   isVibeCoded?: boolean

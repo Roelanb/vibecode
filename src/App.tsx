@@ -1,4 +1,3 @@
-
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
@@ -45,7 +44,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} />
-            <Route path="apps/:appId" element={<AppPage />} />
+            <Route path="app/:id" element={<AppPage />} />
           </Route>
         </Routes>
       </Router>

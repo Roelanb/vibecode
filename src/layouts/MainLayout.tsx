@@ -1,53 +1,78 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Box, CssBaseline, AppBar, Toolbar, Typography, IconButton, Container } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import React from 'react';
+import { AppBar, Toolbar, Typography, Box, CssBaseline, Drawer } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import TreeView from '../components/TreeView';
+import { Outlet } from 'react-router-dom';
 
-const MainLayout = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isAppPage = location.pathname.startsWith('/apps/');
-  const appId = isAppPage ? location.pathname.split('/').pop() : '';
-  
+interface MainLayoutProps {
+  children?: React.ReactNode;
+}
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#3f51b5',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1e1e1e',
+    },
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1a1a1a',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#2a2a2a',
+        },
+      },
+    },
+  },
+});
+
+const drawerWidth = 240;
+
+const MainLayout: React.FC<MainLayoutProps> = () => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <AppBar position="fixed">
-        <Toolbar>
-          {isAppPage ? (
-            <IconButton 
-              edge="start" 
-              color="inherit" 
-              aria-label="back to dashboard"
-              onClick={() => navigate('/')}
-              sx={{ mr: 2 }}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-          ) : (
-            <IconButton 
-              edge="start" 
-              color="inherit" 
-              aria-label="home"
-              onClick={() => navigate('/')}
-              sx={{ mr: 2 }}
-            >
-              <HomeIcon />
-            </IconButton>
-          )}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {isAppPage ? `VibeCode - ${appId?.charAt(0).toUpperCase()}${appId?.slice(1)}` : 'VibeCode Dashboard'}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Toolbar /> {/* Spacer for fixed AppBar */}
-      
-      <Box component="main" sx={{ flexGrow: 1, width: '100%' }}>
-        <Container maxWidth={false} disableGutters={isAppPage} sx={{ height: '100%' }}>
+      <Box sx={{ display: 'flex' }}>
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Toolbar>
+            <Typography variant="h6" noWrap component="div">
+              Vibecode Dashboard
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            <TreeView />
+          </Box>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+          <Toolbar />
           <Outlet />
-        </Container>
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 
